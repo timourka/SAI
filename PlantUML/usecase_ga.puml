@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+actor User as "Пользователь"
+
+rectangle "Система экспериментов ГА" {
+  usecase "Выбрать\nтестовую задачу" as UC_SelectProblem
+  usecase "Задать\nгиперпараметры ГА" as UC_SetHyperparams
+  usecase "Выбрать оператор\nкроссинговера" as UC_SelectCrossover
+  usecase "Запустить один\nэксперимент" as UC_RunSingle
+  usecase "Запустить серию\nэкспериментов" as UC_RunBatch
+  usecase "Просмотреть\nрезультаты" as UC_ViewResults
+  usecase "Экспортировать\nрезультаты (CSV/графики)" as UC_ExportResults
+}
+
+User --> UC_SelectProblem
+User --> UC_SetHyperparams
+User --> UC_SelectCrossover
+User --> UC_RunSingle
+User --> UC_RunBatch
+User --> UC_ViewResults
+User --> UC_ExportResults
+
+UC_RunSingle --> UC_ViewResults
+UC_RunBatch --> UC_ViewResults
+UC_ViewResults --> UC_ExportResults
+
+@enduml

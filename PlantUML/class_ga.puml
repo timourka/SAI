@@ -1,0 +1,160 @@
+@startuml
+' Пакеты для логики
+package "Core GA" {
+    class GeneticAlgorithm {
+        - selectionOperator : SelectionOperator
+        - crossoverOperator : CrossoverOperator
+        - mutationOperator  : MutationOperator
+        - problem           : OptimizationProblem
+        - params            : GAParameters
+        + run() : GAResult
+    }
+
+    class GAParameters {
+        + populationSize : int
+        + crossoverProb  : float
+        + mutationProb   : float
+        + maxGenerations : int
+        + randomSeed     : int
+        + otherParams    : Map
+    }
+
+    class Population {
+        - individuals : List<Individual>
+        + initialize() : void
+        + getBest() : Individual
+    }
+
+    class Individual {
+        + genes   : List<float>
+        + fitness : float
+    }
+
+    class GAResult {
+        + bestIndividual : Individual
+        + history        : List<GenerationStat>
+    }
+
+    class GenerationStat {
+        + generationIndex : int
+        + bestFitness     : float
+        + meanFitness     : float
+    }
+}
+
+package "Operators" {
+    interface SelectionOperator {
+        + select(population : Population, k : int) : List<Individual>
+    }
+
+    interface CrossoverOperator {
+        + crossover(p1 : Individual, p2 : Individual) : List<Individual>
+    }
+
+    interface MutationOperator {
+        + mutate(individual : Individual) : void
+    }
+
+    class TournamentSelection implements SelectionOperator
+    class RouletteSelection implements SelectionOperator
+
+    class OnePointCrossover implements CrossoverOperator
+    class TwoPointCrossover implements CrossoverOperator
+    class UniformCrossover implements CrossoverOperator
+    class NewCrossoverOperator implements CrossoverOperator
+
+    class SimpleMutation implements MutationOperator
+}
+
+package "Problems" {
+    abstract class OptimizationProblem {
+        + dimension : int
+        + evaluate(ind : Individual) : float
+        + decode(ind : Individual) : List<float>
+    }
+
+    class SphereProblem extends OptimizationProblem
+    class RastriginProblem extends OptimizationProblem
+    class AnotherTestProblem extends OptimizationProblem
+}
+
+package "Experiment" {
+    class ExperimentConfig {
+        + problem       : OptimizationProblem
+        + gaParams      : GAParameters
+        + crossoverOp   : CrossoverOperator
+        + selectionOp   : SelectionOperator
+        + mutationOp    : MutationOperator
+        + runsCount     : int
+    }
+
+    class ExperimentRunner {
+        + runSingle(config : ExperimentConfig) : GAResult
+        + runSeries(config : ExperimentConfig) : ExperimentStats
+        + runHyperparameterSearch(space : HyperparameterSpace) : List<ExperimentStats>
+    }
+
+    class ExperimentStats {
+        + results          : List<GAResult>
+        + meanBestFitness  : float
+        + stdBestFitness   : float
+        + minBestFitness   : float
+        + maxBestFitness   : float
+    }
+
+    class HyperparameterSpace {
+        + parameterGrid : Map
+        + getConfigs(baseConfig : ExperimentConfig) : List<ExperimentConfig>
+    }
+
+    class ResultExporter {
+        + exportCSV(stats : ExperimentStats, filePath : String) : void
+        + exportHistory(result : GAResult, filePath : String) : void
+    }
+}
+
+' Связи основных классов
+GeneticAlgorithm --> GAParameters
+GeneticAlgorithm --> SelectionOperator
+GeneticAlgorithm --> CrossoverOperator
+GeneticAlgorithm --> MutationOperator
+GeneticAlgorithm --> OptimizationProblem
+GeneticAlgorithm --> Population
+GeneticAlgorithm --> GAResult
+
+Population "1" o-- "*" Individual
+GAResult "1" o-- "*" GenerationStat
+
+ExperimentConfig --> OptimizationProblem
+ExperimentConfig --> GAParameters
+ExperimentConfig --> CrossoverOperator
+ExperimentConfig --> SelectionOperator
+ExperimentConfig --> MutationOperator
+
+ExperimentRunner --> GeneticAlgorithm
+ExperimentRunner --> ExperimentConfig
+ExperimentRunner --> ExperimentStats
+ExperimentRunner --> HyperparameterSpace
+
+ExperimentStats "1" o-- "*" GAResult
+
+HyperparameterSpace --> ExperimentConfig
+ResultExporter --> ExperimentStats
+ResultExporter --> GAResult
+
+' Наследование операторов
+SelectionOperator <|.. TournamentSelection
+SelectionOperator <|.. RouletteSelection
+
+CrossoverOperator <|.. OnePointCrossover
+CrossoverOperator <|.. TwoPointCrossover
+CrossoverOperator <|.. UniformCrossover
+CrossoverOperator <|.. NewCrossoverOperator
+
+MutationOperator <|.. SimpleMutation
+
+OptimizationProblem <|-- SphereProblem
+OptimizationProblem <|-- RastriginProblem
+OptimizationProblem <|-- AnotherTestProblem
+
+@enduml

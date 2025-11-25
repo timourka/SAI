@@ -1,0 +1,31 @@
+@startuml
+actor User
+
+participant "UI / Notebook" as UI
+participant "ExperimentRunner" as Runner
+participant "HyperparameterSpace" as HSpace
+participant "GeneticAlgorithm" as GA
+participant "ResultExporter" as Exporter
+
+User -> UI : задать Problem,\nсписок операторов,\nгиперпараметры
+UI -> Runner : runHyperparameterSearch(space)
+
+Runner -> HSpace : getConfigs(baseConfig)
+HSpace --> Runner : List<ExperimentConfig>
+
+loop по всем ExperimentConfig
+    Runner -> GA : new GeneticAlgorithm(config)
+    Runner -> GA : run()
+    GA --> Runner : GAResult
+    Runner -> Runner : агрегировать\nстатистику
+end
+
+Runner --> UI : List<ExperimentStats>
+
+== Экспорт результатов ==
+
+User -> UI : запросить экспорт\nрезультатов в CSV
+UI -> Exporter : exportCSV(stats, "results.csv")
+Exporter --> UI : OK
+
+@enduml
