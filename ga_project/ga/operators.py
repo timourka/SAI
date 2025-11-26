@@ -259,7 +259,7 @@ class NewCrossoverOperatorAdaptiveShuffle(CrossoverOperator):
     - если один родитель намного лучше -> смещение в его сторону
     """
 
-    def __init__(self, shuffle_strength=0.3, bias_strength=0.15):
+    def __init__(self, shuffle_strength=0.8, bias_strength=0.15):
         self.shuffle_strength = shuffle_strength
         self.bias_strength = bias_strength
 
@@ -301,6 +301,262 @@ class NewCrossoverOperatorAdaptiveShuffle(CrossoverOperator):
                     g2.append(gw)
 
         return [Individual(g1), Individual(g2)]
+    
+class NewCrossoverOperatorSmartShuffle(CrossoverOperator):
+    """
+    Smart Shuffle Crossover (SSC):
+    - сохраняет гены, близкие между родителями (структура)
+    - шифлит только сильно различающиеся гены
+    - bias в сторону лучшего родителя
+    """
+
+    def __init__(self, diff_threshold=0.2, shuffle_prob=0.9, bias_strength=0.2):
+        self.diff_threshold = diff_threshold
+        self.shuffle_prob = shuffle_prob
+        self.bias_strength = bias_strength
+
+    def crossover(self, p1: Individual, p2: Individual) -> List[Individual]:
+        if p1.fitness <= p2.fitness:
+            best, worst = p1, p2
+        else:
+            best, worst = p2, p1
+
+        c1 = []
+        c2 = []
+
+        for gb, gw in zip(best.genes, worst.genes):
+
+            diff = abs(gb - gw)
+
+            if diff < self.diff_threshold:
+                # гены похожи — сохраняем структуру (идеально для Rosenbrock)
+                if random.random() < (0.5 + self.bias_strength):
+                    c1.append(gb)
+                else:
+                    c1.append(gw)
+
+                if random.random() < (0.5 + self.bias_strength):
+                    c2.append(gb)
+                else:
+                    c2.append(gw)
+
+            else:
+                # гены сильно различаются → разрешаем shuffle
+                if random.random() < self.shuffle_prob:
+                    c1.append(random.choice([gb, gw]))
+                    c2.append(random.choice([gb, gw]))
+                else:
+                    # fallback к uniform+bias
+                    if random.random() < (0.5 + self.bias_strength):
+                        c1.append(gb)
+                    else:
+                        c1.append(gw)
+
+                    if random.random() < (0.5 + self.bias_strength):
+                        c2.append(gb)
+                    else:
+                        c2.append(gw)
+
+        return [Individual(c1), Individual(c2)]
+    
+class NewCrossoverOperatorShuffleSelective(CrossoverOperator):
+    """
+    Частичный Shuffle Crossover с порогом различий:
+    - различающиеся гены определяются через diff_threshold
+    - шафлим ТОЛЬКО гены, которые отличаются у родителей достаточно сильно
+    - похожие гены копируем как есть (структура сохраняется)
+    """
+
+    def __init__(self, diff_threshold=0.5):
+        self.diff_threshold = diff_threshold
+
+    def crossover(self, p1: Individual, p2: Individual) -> List[Individual]:
+        # 1. Копии для детей
+        child1 = list(p1.genes)
+        child2 = list(p2.genes)
+
+        # 2. Индексы генов, которые отличаются >= threshold
+        diff_indices = [
+            i for i, (a, b) in enumerate(zip(p1.genes, p2.genes))
+            if abs(a - b) >= self.diff_threshold
+        ]
+
+        # 3. Собираем различающиеся гены в одну «кашу»
+        pool = []
+        for i in diff_indices:
+            pool.append(p1.genes[i])
+            pool.append(p2.genes[i])
+
+        # Если нечего шафлить → возвращаем копии родителей
+        if not pool:
+            return [Individual(child1), Individual(child2)]
+
+        # 4. Шафлим
+        random.shuffle(pool)
+
+        # 5. Делим пополам
+        half = len(pool) // 2
+        c1_values = pool[:half]
+        c2_values = pool[half:half*2]
+
+        # 6. Заполняем новые значения обратно
+        idx1 = 0
+        idx2 = 0
+        for i in diff_indices:
+            child1[i] = c1_values[idx1]
+            child2[i] = c2_values[idx2]
+            idx1 += 1
+            idx2 += 1
+
+        return [Individual(child1), Individual(child2)]
+    
+class NewCrossoverOperatorGoodGenePreservingShuffle(CrossoverOperator):
+    """
+    Точный анализ вклада генов:
+    - Находим гены, которые заметно различаются (diff_threshold)
+    - Для каждого гена:
+        * временно заменяем на значение худшего родителя
+        * вычисляем fitness
+        * если fitness ухудшается -> ген важный (сохраняем)
+        * иначе -> ген в shuffle-пул
+    - Важные гены копируются от лучшего родителя
+    - Остальные различающиеся гены шафлим
+    """
+
+    def __init__(self, problem : OptimizationProblem, diff_threshold=0.1):
+        self.problem = problem
+        self.diff_threshold = diff_threshold
+
+    def crossover(self, p1: Individual, p2: Individual) -> List[Individual]:
+        # Определяем лучшего и худшего
+        if p1.fitness <= p2.fitness:
+            best, worst = p1, p2
+        else:
+            best, worst = p2, p1
+
+        best_fit = best.fitness
+
+        # Начальные дети = копии лучшего (важные гены будем оставлять)
+        child1 = list(best.genes)
+        child2 = list(best.genes)
+
+        # Список различающихся генов
+        diff_indices = [
+            i for i, (gb, gw) in enumerate(zip(best.genes, worst.genes))
+            if abs(gb - gw) >= self.diff_threshold
+        ]
+
+        if not diff_indices:
+            return [Individual(child1), Individual(child2)]
+
+        good_genes = []      # эти гены сохраняем
+        shuffle_genes = []   # эти гены перемешиваем
+
+        # ---- Точный анализ вклада каждого гена ----
+        for i in diff_indices:
+            # копия лучшего
+            tmp = list(best.genes)
+            # заменяем ген на значение худшего
+            tmp[i] = worst.genes[i]
+
+            # вычисляем fitness
+            tmp_ind = Individual(tmp)
+            tmp_fit = self.problem.evaluate(tmp_ind)
+
+            # если стало хуже → ген важный
+            if tmp_fit > best_fit:
+                good_genes.append(i)
+            else:
+                shuffle_genes.append(i)
+
+        # ---- Формирование shuffle-пула ----
+        pool = []
+        for i in shuffle_genes:
+            pool.append(best.genes[i])
+            pool.append(worst.genes[i])
+
+        random.shuffle(pool)
+
+        half = len(pool) // 2
+        c1_vals = pool[:half]
+        c2_vals = pool[half:half*2]
+
+        idx1 = idx2 = 0
+
+        # Заполнение перемешанных генов
+        for i in shuffle_genes:
+            child1[i] = c1_vals[idx1]
+            child2[i] = c2_vals[idx2]
+            idx1 += 1
+            idx2 += 1
+
+        # Важные гены уже стоят на месте — скопированы от best.genes
+
+        return [Individual(child1), Individual(child2)]
+    
+class NewCrossoverOperatorRandomFixedShuffle(CrossoverOperator):
+    """
+    Random Fixed Shuffle Crossover:
+    - Каждый ген случайно относится к категории FIXED или SHUFFLED.
+    - FIXED гены наследуются как есть (от случайного или лучшего родителя).
+    - SHUFFLED гены собираются в пул, перемешиваются и распределяются между потомками.
+    """
+
+    def __init__(self, fix_prob=0.6):
+        """
+        fix_prob — вероятность, что ген фиксируется (НЕ шафлится)
+        """
+        self.fix_prob = fix_prob
+
+    def crossover(self, p1: Individual, p2: Individual) -> List[Individual]:
+        n = len(p1.genes)
+
+        # Изначально дети — копии родителей
+        c1 = list(p1.genes)
+        c2 = list(p2.genes)
+
+        # Список индексов, которые будут шафлиться
+        shuffle_indices = []
+        # Список фиксированных генов
+        fixed_indices = []
+
+        # 1. Разделяем гены на FIXED и SHUFFLED
+        for i in range(n):
+            if random.random() < self.fix_prob:
+                fixed_indices.append(i)
+            else:
+                shuffle_indices.append(i)
+
+        # Если нечего шафлить — просто вернуть родителей
+        if not shuffle_indices:
+            return [Individual(c1), Individual(c2)]
+
+        # 2. Собираем гены для шафла в одну кучу
+        pool = []
+        for i in shuffle_indices:
+            pool.append(p1.genes[i])
+            pool.append(p2.genes[i])
+
+        # 3. Перемешиваем
+        random.shuffle(pool)
+
+        # 4. Разделяем пополам
+        half = len(pool) // 2
+        c1_vals = pool[:half]
+        c2_vals = pool[half:half*2]
+
+        # 5. Записываем значения обратно
+        idx1 = 0
+        idx2 = 0
+        for i in shuffle_indices:
+            c1[i] = c1_vals[idx1]
+            c2[i] = c2_vals[idx2]
+            idx1 += 1
+            idx2 += 1
+
+        # FIXED гены остаются как были (у родителей)
+
+        return [Individual(c1), Individual(c2)]
 
 # ====== MutationOperator ======
 

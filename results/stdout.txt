@@ -1,0 +1,205 @@
+f(x) = sum(x_i^2)
+
+--- Crossover: one_point ---
+mean best fitness = 0.032432
+std  best fitness = 0.013051
+min  best fitness = 0.013209
+max  best fitness = 0.050799
+
+--- Crossover: two_point ---
+mean best fitness = 0.029160
+std  best fitness = 0.011622
+min  best fitness = 0.012377
+max  best fitness = 0.053600
+
+--- Crossover: uniform ---
+mean best fitness = 0.034437
+std  best fitness = 0.017000
+min  best fitness = 0.012928
+max  best fitness = 0.066802
+
+--- Crossover: newHeuristic ---
+mean best fitness = 0.002920
+std  best fitness = 0.001541
+min  best fitness = 0.001273
+max  best fitness = 0.006009
+
+--- Crossover: newUniform ---
+mean best fitness = 0.018190
+std  best fitness = 0.007025
+min  best fitness = 0.006608
+max  best fitness = 0.033466
+
+--- Crossover: newShuffle ---
+mean best fitness = 0.010805
+std  best fitness = 0.005675
+min  best fitness = 0.003926
+max  best fitness = 0.020744
+
+--- Crossover: newAdaptiveShuffle ---
+mean best fitness = 0.012700
+std  best fitness = 0.004641
+min  best fitness = 0.007088
+max  best fitness = 0.024470
+
+--- Crossover: newSmartShuffle ---
+mean best fitness = 0.020420
+std  best fitness = 0.005969
+min  best fitness = 0.012871
+max  best fitness = 0.034224
+
+--- Crossover: newShuffleSelective ---
+mean best fitness = 0.040172
+std  best fitness = 0.016136
+min  best fitness = 0.013538
+max  best fitness = 0.062847
+
+--- Crossover: newGoodGenePreservingShuffle ---
+mean best fitness = 0.002461
+std  best fitness = 0.000892
+min  best fitness = 0.001259
+max  best fitness = 0.004546
+
+--- Crossover: newRandomFixedShuffle ---
+mean best fitness = 0.021207
+std  best fitness = 0.010685
+min  best fitness = 0.011005
+max  best fitness = 0.041049
+
+Сравнение завершено. CSV-файлы лежат в папке 'results'.
+f(x) = 10n + sum(x_i^2 - 10*cos(2πx_i))
+
+--- Crossover: one_point ---
+mean best fitness = 4.100491
+std  best fitness = 0.944147
+min  best fitness = 2.901035
+max  best fitness = 6.112327
+
+--- Crossover: two_point ---
+mean best fitness = 4.074262
+std  best fitness = 1.282561
+min  best fitness = 1.417195
+max  best fitness = 5.483085
+
+--- Crossover: uniform ---
+mean best fitness = 3.445652
+std  best fitness = 0.915510
+min  best fitness = 2.182526
+max  best fitness = 5.133797
+
+--- Crossover: newHeuristic ---
+mean best fitness = 17.839791
+std  best fitness = 6.144839
+min  best fitness = 9.743968
+max  best fitness = 28.280204
+
+--- Crossover: newUniform ---
+mean best fitness = 2.590279
+std  best fitness = 1.349148
+min  best fitness = 0.396512
+max  best fitness = 4.918527
+
+--- Crossover: newShuffle ---
+mean best fitness = 0.507912
+std  best fitness = 0.378855
+min  best fitness = 0.067531
+max  best fitness = 1.193765
+
+--- Crossover: newAdaptiveShuffle ---
+mean best fitness = 2.564100
+std  best fitness = 0.805101
+min  best fitness = 1.630202
+max  best fitness = 3.810077
+
+--- Crossover: newSmartShuffle ---
+mean best fitness = 2.595369
+std  best fitness = 0.722832
+min  best fitness = 1.334637
+max  best fitness = 3.906325
+
+--- Crossover: newShuffleSelective ---
+mean best fitness = 2.316563
+std  best fitness = 1.239433
+min  best fitness = 0.272060
+max  best fitness = 4.524576
+
+--- Crossover: newGoodGenePreservingShuffle ---
+mean best fitness = 0.414954
+std  best fitness = 0.206451
+min  best fitness = 0.112726
+max  best fitness = 0.700791
+
+--- Crossover: newRandomFixedShuffle ---
+mean best fitness = 0.900248
+std  best fitness = 0.871115
+min  best fitness = 0.064452
+max  best fitness = 2.820257
+
+Сравнение завершено. CSV-файлы лежат в папке 'results'.
+f(x) = sum(100*(x_{i+1} - x_i^2)^2 + (1 - x_i)^2)
+
+--- Crossover: one_point ---
+mean best fitness = 7.732194
+std  best fitness = 2.069449
+min  best fitness = 3.054994
+max  best fitness = 9.893488
+
+--- Crossover: two_point ---
+mean best fitness = 9.776298
+std  best fitness = 5.165872
+min  best fitness = 6.196173
+max  best fitness = 25.078674
+
+--- Crossover: uniform ---
+mean best fitness = 7.910177
+std  best fitness = 1.182135
+min  best fitness = 6.100208
+max  best fitness = 10.096450
+
+--- Crossover: newHeuristic ---
+mean best fitness = 8.376122
+std  best fitness = 0.425760
+min  best fitness = 8.085431
+max  best fitness = 9.624345
+
+--- Crossover: newUniform ---
+mean best fitness = 6.820470
+std  best fitness = 2.233185
+min  best fitness = 0.889210
+max  best fitness = 8.537630
+
+--- Crossover: newShuffle ---
+mean best fitness = 9.121986
+std  best fitness = 0.213720
+min  best fitness = 8.791854
+max  best fitness = 9.465875
+
+--- Crossover: newAdaptiveShuffle ---
+mean best fitness = 7.398798
+std  best fitness = 1.399253
+min  best fitness = 4.568812
+max  best fitness = 9.058999
+
+--- Crossover: newSmartShuffle ---
+mean best fitness = 7.559434
+std  best fitness = 1.421013
+min  best fitness = 4.405564
+max  best fitness = 9.433145
+
+--- Crossover: newShuffleSelective ---
+mean best fitness = 7.927263
+std  best fitness = 1.149357
+min  best fitness = 5.925671
+max  best fitness = 10.237194
+
+--- Crossover: newGoodGenePreservingShuffle ---
+mean best fitness = 5.747912
+std  best fitness = 2.046481
+min  best fitness = 1.083706
+max  best fitness = 8.273624
+
+--- Crossover: newRandomFixedShuffle ---
+mean best fitness = 9.051854
+std  best fitness = 0.284825
+min  best fitness = 8.676793
+max  best fitness = 9.625910

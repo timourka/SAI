@@ -18,6 +18,10 @@ from .operators import (
     NewCrossoverOperatorUniform,
     NewCrossoverOperatorShuffle,
     NewCrossoverOperatorAdaptiveShuffle,
+    NewCrossoverOperatorSmartShuffle,
+    NewCrossoverOperatorShuffleSelective,
+    NewCrossoverOperatorGoodGenePreservingShuffle,
+    NewCrossoverOperatorRandomFixedShuffle,
     MutationOperator,
     SimpleMutation,
 )

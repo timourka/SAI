@@ -15,6 +15,10 @@ from ga import (
     NewCrossoverOperatorUniform,
     NewCrossoverOperatorShuffle,
     NewCrossoverOperatorAdaptiveShuffle,
+    NewCrossoverOperatorSmartShuffle,
+    NewCrossoverOperatorShuffleSelective,
+    NewCrossoverOperatorGoodGenePreservingShuffle,
+    NewCrossoverOperatorRandomFixedShuffle,
     ExperimentConfig,
     ExperimentRunner,
     ResultExporter,
@@ -43,6 +47,10 @@ def run_problem(problem : OptimizationProblem, problem_name : str):
         "newUniform": NewCrossoverOperatorUniform(),
         "newShuffle": NewCrossoverOperatorShuffle(),
         "newAdaptiveShuffle": NewCrossoverOperatorAdaptiveShuffle(),
+        "newSmartShuffle": NewCrossoverOperatorSmartShuffle(),
+        "newShuffleSelective": NewCrossoverOperatorShuffleSelective(),
+        "newGoodGenePreservingShuffle": NewCrossoverOperatorGoodGenePreservingShuffle(problem=problem),
+        "newRandomFixedShuffle": NewCrossoverOperatorRandomFixedShuffle(),
     }
 
     runner = ExperimentRunner()
@@ -79,3 +87,4 @@ def run_comparison():
 
 if __name__ == "__main__":
     run_comparison()
+    
