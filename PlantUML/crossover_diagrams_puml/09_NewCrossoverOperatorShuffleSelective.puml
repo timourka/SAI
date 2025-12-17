@@ -1,0 +1,31 @@
+@startuml
+title NewCrossoverOperatorShuffleSelective.crossover(p1, p2)
+start
+:child1 = copy(p1.genes);
+:child2 = copy(p2.genes);
+
+:diff_indices = индексы i, где abs(p1[i]-p2[i]) >= diff_threshold;
+
+:pool = [];
+:для каждого i в diff_indices добавить p1[i] и p2[i] в pool;
+
+if (pool пуст?) then (да)
+  :return [Individual(child1), Individual(child2)];
+  stop
+else (нет)
+  :shuffle(pool);
+  :half = len(pool)//2;
+  :c1_vals = pool[0:half];
+  :c2_vals = pool[half:2*half];
+
+  :idx1=0; idx2=0;
+  :для каждого i в diff_indices;
+  while (есть следующий i?) is (да)
+    :child1[i] = c1_vals[idx1]; idx1++;
+    :child2[i] = c2_vals[idx2]; idx2++;
+  endwhile (нет)
+
+  :return [Individual(child1), Individual(child2)];
+  stop
+endif
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+title TwoPointCrossover.crossover(p1, p2)
+start
+: n = len(p1.genes);
+if (n < 3?) then (да)
+  :fallback -> OnePointCrossover.crossover(p1, p2);
+  stop
+else (нет)
+  :p1_idx = random.randint(1, n-2);
+  :p2_idx = random.randint(p1_idx+1, n-1);
+  :c1 = p1[0:p1_idx] + p2[p1_idx:p2_idx] + p1[p2_idx:n];
+  :c2 = p2[0:p1_idx] + p1[p1_idx:p2_idx] + p2[p2_idx:n];
+  :return [Individual(c1), Individual(c2)];
+  stop
+endif
+@enduml

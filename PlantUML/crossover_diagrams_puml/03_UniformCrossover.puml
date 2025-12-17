@@ -1,0 +1,20 @@
+@startuml
+title UniformCrossover.crossover(p1, p2)
+start
+: n = len(p1.genes);
+: c1_genes = [];
+: c2_genes = [];
+: i = 0;
+while (i < n?) is (да)
+  if (random() < swap_prob?) then (да)
+    :c1 += p2[i];
+    :c2 += p1[i];
+  else (нет)
+    :c1 += p1[i];
+    :c2 += p2[i];
+  endif
+  :i = i + 1;
+endwhile (нет)
+:return [Individual(c1_genes), Individual(c2_genes)];
+stop
+@enduml

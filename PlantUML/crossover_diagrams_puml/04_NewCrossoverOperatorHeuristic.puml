@@ -1,0 +1,37 @@
+@startuml
+title NewCrossoverOperatorHeuristic.crossover(p1, p2)
+start
+if (p1.fitness is None OR p2.fitness is None?) then (да)
+  :best = p1;
+  :worst = p2;
+else (нет)
+  if (p1.fitness <= p2.fitness?) then (да)
+    :best = p1;
+    :worst = p2;
+  else (нет)
+    :best = p2;
+    :worst = p1;
+  endif
+endif
+
+:c1_genes = [];
+:c2_genes = [];
+
+:для каждого (gb, gw) из zip(best.genes, worst.genes);
+while (есть следующий ген?) is (да)
+  :low = min(gb, gw);
+  :high = max(gb, gw);
+  :d = high - low;
+
+  :g1 = bias*gb + (1-bias)*gw;
+  :g_mid = (gb + gw)/2;
+  :g2 = bias*g_mid + (1-bias)*gb;
+
+  :noise = gauss(0, noise_scale*d);
+  :c1 += (g1 + noise);
+  :c2 += (g2 + noise);
+endwhile (нет)
+
+:return [Individual(c1_genes), Individual(c2_genes)];
+stop
+@enduml

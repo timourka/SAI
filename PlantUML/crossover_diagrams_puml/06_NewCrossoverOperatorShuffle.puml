@@ -1,0 +1,11 @@
+@startuml
+title NewCrossoverOperatorShuffle.crossover(p1, p2)
+start
+:combined = p1.genes + p2.genes;
+:shuffle(combined);
+:half = len(p1.genes);
+:c1 = combined[0:half];
+:c2 = combined[half:2*half];
+:return [Individual(c1), Individual(c2)];
+stop
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+title NewCrossoverOperatorUniform.crossover(p1, p2)
+start
+if (p1.fitness <= p2.fitness?) then (да)
+  :best = p1;
+  :worst = p2;
+else (нет)
+  :best = p2;
+  :worst = p1;
+endif
+
+:prob_best = 0.5 + bias_strength;
+:c1_genes = [];
+:c2_genes = [];
+
+:для каждого (gb, gw) из zip(best.genes, worst.genes);
+while (есть следующий ген?) is (да)
+  if (random() < prob_best?) then (да)
+    :c1 += gb;
+  else (нет)
+    :c1 += gw;
+  endif
+
+  if (random() < prob_best?) then (да)
+    :c2 += gb;
+  else (нет)
+    :c2 += gw;
+  endif
+endwhile (нет)
+
+:return [Individual(c1_genes), Individual(c2_genes)];
+stop
+@enduml

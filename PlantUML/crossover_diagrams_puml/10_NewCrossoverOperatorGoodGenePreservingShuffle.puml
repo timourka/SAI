@@ -1,0 +1,54 @@
+@startuml
+title NewCrossoverOperatorGoodGenePreservingShuffle.crossover(p1, p2)
+start
+if (p1.fitness <= p2.fitness?) then (да)
+  :best = p1; worst = p2;
+else (нет)
+  :best = p2; worst = p1;
+endif
+
+:best_fit = best.fitness;
+:child1 = copy(best.genes);
+:child2 = copy(best.genes);
+
+:diff_indices = индексы i, где abs(best[i]-worst[i]) >= diff_threshold;
+if (diff_indices пуст?) then (да)
+  :return [Individual(child1), Individual(child2)];
+  stop
+endif
+
+:good_genes = [];
+:shuffle_genes = [];
+
+:для каждого i в diff_indices;
+while (есть следующий i?) is (да)
+  :tmp = copy(best.genes);
+  :tmp[i] = worst[i];
+  :tmp_ind = Individual(tmp);
+  :tmp_fit = problem.evaluate(tmp_ind);
+
+  if (tmp_fit > best_fit?) then (да)
+    :good_genes += i;
+  else (нет)
+    :shuffle_genes += i;
+  endif
+endwhile (нет)
+
+:pool = [];
+:для каждого i в shuffle_genes добавить best[i] и worst[i] в pool;
+:shuffle(pool);
+
+:half = len(pool)//2;
+:c1_vals = pool[0:half];
+:c2_vals = pool[half:2*half];
+
+:idx1=0; idx2=0;
+:для каждого i в shuffle_genes;
+while (есть следующий i?) is (да)
+  :child1[i] = c1_vals[idx1]; idx1++;
+  :child2[i] = c2_vals[idx2]; idx2++;
+endwhile (нет)
+
+:return [Individual(child1), Individual(child2)];
+stop
+@enduml

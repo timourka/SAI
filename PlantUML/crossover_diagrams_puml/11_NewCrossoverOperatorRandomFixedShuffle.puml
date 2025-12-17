@@ -1,0 +1,43 @@
+@startuml
+title NewCrossoverOperatorRandomFixedShuffle.crossover(p1, p2)
+start
+:n = len(p1.genes);
+:c1 = copy(p1.genes);
+:c2 = copy(p2.genes);
+
+:shuffle_indices = [];
+:fixed_indices = [];
+
+:i = 0;
+while (i < n?) is (да)
+  if (random() < fix_prob?) then (да)
+    :fixed_indices += i;
+  else (нет)
+    :shuffle_indices += i;
+  endif
+  :i = i + 1;
+endwhile (нет)
+
+if (shuffle_indices пуст?) then (да)
+  :return [Individual(c1), Individual(c2)];
+  stop
+endif
+
+:pool = [];
+:для каждого i в shuffle_indices добавить p1[i] и p2[i] в pool;
+:shuffle(pool);
+
+:half = len(pool)//2;
+:c1_vals = pool[0:half];
+:c2_vals = pool[half:2*half];
+
+:idx1=0; idx2=0;
+:для каждого i в shuffle_indices;
+while (есть следующий i?) is (да)
+  :c1[i] = c1_vals[idx1]; idx1++;
+  :c2[i] = c2_vals[idx2]; idx2++;
+endwhile (нет)
+
+:return [Individual(c1), Individual(c2)];
+stop
+@enduml

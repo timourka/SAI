@@ -1,0 +1,15 @@
+@startuml
+title OnePointCrossover.crossover(p1, p2)
+start
+: n = len(p1.genes);
+if (n < 2?) then (да)
+  :return [clone(p1), clone(p2)];
+  stop
+else (нет)
+  :point = random.randint(1, n-1);
+  :c1_genes = p1[0:point] + p2[point:n];
+  :c2_genes = p2[0:point] + p1[point:n];
+  :return [Individual(c1_genes), Individual(c2_genes)];
+  stop
+endif
+@enduml

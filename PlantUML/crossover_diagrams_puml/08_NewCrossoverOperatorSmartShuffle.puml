@@ -1,0 +1,54 @@
+@startuml
+title NewCrossoverOperatorSmartShuffle.crossover(p1, p2)
+start
+if (p1.fitness <= p2.fitness?) then (да)
+  :best = p1;
+  :worst = p2;
+else (нет)
+  :best = p2;
+  :worst = p1;
+endif
+
+:c1 = [];
+:c2 = [];
+
+:для каждого (gb, gw) из zip(best.genes, worst.genes);
+while (есть следующий ген?) is (да)
+  :diff = abs(gb - gw);
+
+  if (diff < diff_threshold?) then (да)
+    :p = 0.5 + bias_strength;
+    if (random() < p?) then (да)
+      :c1 += gb;
+    else (нет)
+      :c1 += gw;
+    endif
+    if (random() < p?) then (да)
+      :c2 += gb;
+    else (нет)
+      :c2 += gw;
+    endif
+
+  else (нет)
+    if (random() < shuffle_prob?) then (да)
+      :c1 += choice(gb, gw);
+      :c2 += choice(gb, gw);
+    else (нет)
+      :p = 0.5 + bias_strength;
+      if (random() < p?) then (да)
+        :c1 += gb;
+      else (нет)
+        :c1 += gw;
+      endif
+      if (random() < p?) then (да)
+        :c2 += gb;
+      else (нет)
+        :c2 += gw;
+      endif
+    endif
+  endif
+endwhile (нет)
+
+:return [Individual(c1), Individual(c2)];
+stop
+@enduml
