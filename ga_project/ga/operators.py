@@ -256,7 +256,6 @@ class NewCrossoverOperatorAdaptiveShuffle(CrossoverOperator):
     Adaptive Shuffle Crossover (ASC):
     - если родители похожи -> мягкое смешивание (uniform)
     - если сильно различаются -> частичное случайное перемешивание
-    - если один родитель намного лучше -> смещение в его сторону
     """
 
     def __init__(self, shuffle_strength=0.8, bias_strength=0.15):
