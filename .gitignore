@@ -1,3 +1,4 @@
 ~$*.docx
 ~$*.pptx
 .ReviewSystem.vpp.lck
+__pycache__/
